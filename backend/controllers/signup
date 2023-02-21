@@ -1,0 +1,182 @@
+const Signup = async (req, res) => {
+  //Existing User
+  //Hashed Password
+  //Creating User
+  //generate token
+
+  const { Username, Email, Password, Confirm_Password, Phone , DOB ,token } = req.body;
+  try {
+    //Checking existing user or not
+
+    const existingUser = await userSchema.findOne({ Email: Email });
+    if (existingUser) {
+      res.status(400).json({ message: "User is already exist" });
+    }
+
+    if (Password === Confirm_Password) {
+      // encrypt or hash password
+
+      const hashedPassword = await bcrypt.hash(Password, 12);
+      const hashedConfirmPassword = await bcrypt.hash(Confirm_Password, 12);
+     
+     //vali
+      const valid = await validate.validateAsync(req.body)
+      
+      if(valid){
+         //user creation
+        const data = new userSchema({
+            Username: Username,
+            Email: Email,
+            Password: hashedPassword,
+            Confirm_Password: hashedConfirmPassword,
+            Phone: Phone,
+            DOB: DOB,
+            
+          });
+          
+    
+          // generating token
+    
+          const token = jwt.sign(
+            { Email: data.Email, id: data._id },
+            process.env.SECRET_KEY ,{expiresIn : '5m'}
+          );
+          // token will save in database 
+          if(token){
+            const data = new userSchema({
+                Username: Username,
+                Email: Email,
+                Password: hashedPassword,
+                Confirm_Password: hashedConfirmPassword,
+                Phone: Phone,
+                DOB: DOB,
+                token : token
+                
+              });
+              //save in database
+              await data.save();
+            
+          }
+        
+          res
+            .status(201)
+            .json({
+              message: "Register successfully ",
+              result: data,
+              token: token,
+            });
+
+      }
+      else {
+        res.status(400).json({message : "data is not valid"})
+      }
+      
+    } else {
+      res
+        .status(400)
+        .json({ message: "password and confirm password is not matched" });
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+
+
+
+
+const Signup = async (req, res) => {
+  //Existing User
+  //Hashed Password
+  //Creating User
+  //generate token
+
+  const { Username, Email, Password, Confirm_Password, Phone , DOB  } = req.body;
+
+  // const body = req.body;
+
+  try {
+
+    let existingUser = await signup.findUser(Email)
+    if(!existingUser.success){
+      let signu_Up = await signup.comparePassword(Password , Confirm_Password )
+
+    }
+    else {
+
+      res.status(400).json({ message: "User is already exist" });
+    }
+    //Checking existing user or not
+
+    // const existingUser = await userSchema.findOne({ Email: Email });
+    // if (existingUser) {
+    //   res.status(400).json({ message: "User is already exist" });
+    // }
+
+    if (Password === Confirm_Password) {
+      // encrypt or hash password
+
+      const hashedPassword = await bcrypt.hash(Password, 12);
+      const hashedConfirmPassword = await bcrypt.hash(Confirm_Password, 12);
+     
+     //vali
+      const valid = await validate.validateAsync(req.body)
+      
+      if(valid){
+         //user creation
+        const data = new userSchema({
+            Username: Username,
+            Email: Email,
+            Password: hashedPassword,
+            Confirm_Password: hashedConfirmPassword,
+            Phone: Phone,
+            DOB: DOB,
+            
+          });
+          
+    
+          // generating token
+    
+          const token = jwt.sign(
+            { Email: data.Email, id: data._id },
+            process.env.SECRET_KEY ,{expiresIn : '5m'}
+          );
+          // token will save in database 
+          if(token){
+            const data = new userSchema({
+                Username: Username,
+                Email: Email,
+                Password: hashedPassword,
+                Confirm_Password: hashedConfirmPassword,
+                Phone: Phone,
+                DOB: DOB,
+                token : token
+                
+              });
+              //save in database
+              await data.save();
+            
+          }
+        
+          res
+            .status(201)
+            .json({
+              message: "Register successfully ",
+              result: data,
+              token: token,
+            });
+
+      }
+      else {
+        res.status(400).json({message : "data is not valid"})
+      }
+      
+    } else {
+      res
+        .status(400)
+        .json({ message: "password and confirm password is not matched" });
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+};
